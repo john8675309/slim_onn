@@ -26,6 +26,24 @@ device installs.
 This downloads the APKs into `slim-payload/`, pushes them plus `slim-device.sh`
 to `/data/local/tmp/slim`, and runs the device script over ADB.
 
+On **Windows PowerShell 5.1 or PowerShell 7**, use the native PowerShell port:
+
+```powershell
+.\slim-push.ps1
+```
+
+Install Android SDK Platform-Tools and add the folder containing `adb.exe` to
+your `PATH` first. Keep `slim-device.sh` and `slim.json` beside the PowerShell
+script. No Bash, wget, or jq is needed. Enable ADB debugging on the TV and
+approve the connection when prompted.
+
+If Windows blocks script execution, allow it for this PowerShell session:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\slim-push.ps1
+```
+
 Once the payload is on the device, everything else is local to it. Re-running
 costs no downloads:
 
@@ -148,6 +166,13 @@ numbered list — or skip the prompt:
 
 ```sh
 SLIM_SERIAL=emulator-5554 ./slim-push.sh
+```
+
+In PowerShell:
+
+```powershell
+$env:SLIM_SERIAL = '192.168.1.100:5555'
+.\slim-push.ps1
 ```
 
 `ANDROID_SERIAL` works too. To re-run the device script by hand, pass `-s`:
