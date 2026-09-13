@@ -20,7 +20,8 @@
     "com.wbd.stream",
     "com.google.android.play.games",
     "com.google.android.videos",
-    "com.instagram.airwave"
+    "com.instagram.airwave",
+    "com.android.tv"
   ],
   "disable": [
     "com.google.android.apps.tv.launcherx",
