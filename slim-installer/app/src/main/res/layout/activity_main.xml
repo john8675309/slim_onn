@@ -51,6 +51,12 @@
                 android:text="Allow installs from this app" />
 
             <Button
+                android:id="@+id/wirelessDebugButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Wireless debugging settings" />
+
+            <Button
                 android:id="@+id/openShizukuButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

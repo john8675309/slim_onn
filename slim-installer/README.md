@@ -57,6 +57,28 @@ plain `CATEGORY_LAUNCHER` entry and no `LEANBACK_LAUNCHER` one, so it never
 appears on an Android TV home screen. Without this button there is no obvious
 way to reach it after installing it.
 
+### The app cannot start the Shizuku server
+
+Worth stating plainly, because the buttons might imply otherwise. Starting the
+server means running a process as shell (uid 2000) — the exact thing the app
+has no way to do. Shizuku starts it itself, using the `libadb.so` it bundles to
+act as an ADB client against this device's own Wireless Debugging over
+loopback. Nor can the app switch Wireless Debugging on: that needs
+`WRITE_SECURE_SETTINGS`, which is `signature|privileged`. It can only *read*
+the setting, which it does, to tell you whether it is already on.
+
+Shizuku exposes no deep link for starting either — `MainActivity` is its only
+exported entry point — so the pairing flow has to happen in Shizuku's own UI.
+
+What the app does instead is remove the navigation pain, which on a TV remote
+is most of the difficulty:
+
+1. **Wireless debugging settings** — jumps straight to Developer options, and
+   the log says whether Wireless Debugging is currently on or off.
+2. **Open Shizuku** — the app is otherwise unreachable on a TV. Do Pairing,
+   then Start, there.
+3. Come back; the app re-checks on resume and reconnects on its own.
+
 JTV is resolved through `https://johnhass.com/jtv.json` — the same contract the
 shell scripts use — so it always picks up the current release and verifies the
 published `sha256`. Emby is chosen per ABI from `Build.SUPPORTED_ABIS`.

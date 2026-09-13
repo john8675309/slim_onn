@@ -79,6 +79,8 @@ public final class MainActivity extends Activity implements InstallResultReceive
                 .setOnClickListener(v -> worker.execute(this::doInstall));
         ((Button) findViewById(R.id.debloatButton))
                 .setOnClickListener(v -> worker.execute(this::doDebloat));
+        ((Button) findViewById(R.id.wirelessDebugButton))
+                .setOnClickListener(v -> openWirelessDebugging());
         ((Button) findViewById(R.id.openShizukuButton))
                 .setOnClickListener(v -> openShizuku());
         ((Button) findViewById(R.id.recheckButton))
@@ -157,8 +159,19 @@ public final class MainActivity extends Activity implements InstallResultReceive
             append("[shizuku] not running");
             append("  Debloat needs DELETE_PACKAGES and");
             append("  CHANGE_COMPONENT_ENABLED_STATE, both signature|privileged,");
-            append("  so no sideloaded app can hold them. Start Shizuku from");
-            append("  Wireless Debugging to enable it.");
+            append("  so no sideloaded app can hold them.");
+            append("");
+            // Be explicit that this app cannot do the starting. Starting the
+            // server means running a process as shell, which is the very thing
+            // it lacks; Shizuku does it itself with its bundled adb client,
+            // paired against this device's own Wireless Debugging.
+            append("  This app cannot start Shizuku for you: starting it means");
+            append("  running a process as shell, which is exactly what it has");
+            append("  no way to do. Shizuku does it itself. Steps:");
+            append("   1. Wireless debugging settings -> turn it on"
+                    + (wirelessDebuggingOn() ? "  (already on)" : "  (currently off)"));
+            append("   2. Open Shizuku -> Pairing, then Start");
+            append("   3. Come back here; it reconnects on its own");
         }
         append("");
     }
@@ -451,6 +464,38 @@ public final class MainActivity extends Activity implements InstallResultReceive
             append("[shizuku] opened - start it, then come back");
         } catch (Exception e) {
             append("[shizuku] could not open it: " + e);
+        }
+    }
+
+    /**
+     * Whether Wireless Debugging is switched on.
+     *
+     * <p>Readable by any app; only writing it is restricted, so the app can
+     * report the state but cannot change it.
+     */
+    private boolean wirelessDebuggingOn() {
+        try {
+            return Settings.Global.getInt(getContentResolver(), "adb_wifi_enabled", 0) == 1;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Jumps to Developer options, where Wireless Debugging lives.
+     *
+     * <p>The app cannot switch it on itself -- WRITE_SECURE_SETTINGS is
+     * signature|privileged -- and finding this screen with a remote is
+     * genuinely tedious, so the least it can do is go straight there.
+     */
+    private void openWirelessDebugging() {
+        try {
+            startActivity(new Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            append("[adb] Developer options opened - turn on Wireless debugging");
+        } catch (Exception e) {
+            append("[adb] no developer options screen on this device: " + e);
+            append("  Settings > System > About > tap Build several times first.");
         }
     }
 
