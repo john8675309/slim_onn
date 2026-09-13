@@ -167,11 +167,19 @@ public final class MainActivity extends Activity implements InstallResultReceive
             // paired against this device's own Wireless Debugging.
             append("  This app cannot start Shizuku for you: starting it means");
             append("  running a process as shell, which is exactly what it has");
-            append("  no way to do. Shizuku does it itself. Steps:");
+            append("  no way to do. Two things can, though:");
+            append("");
+            append("  With a PC: adb shell already runs as shell, so no pairing");
+            append("  is needed. Run start-shizuku.sh from the slim_onn repo,");
+            append("  or the starter directly over adb.");
+            append("");
+            append("  Without a PC: Shizuku reaches the device from itself, and");
+            append("  that is the only case needing Wireless Debugging.");
             append("   1. Wireless debugging settings -> turn it on"
                     + (wirelessDebuggingOn() ? "  (already on)" : "  (currently off)"));
             append("   2. Open Shizuku -> Pairing, then Start");
-            append("   3. Come back here; it reconnects on its own");
+            append("");
+            append("  Either way, come back here; it reconnects on its own.");
         }
         append("");
     }

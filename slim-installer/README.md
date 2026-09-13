@@ -70,6 +70,12 @@ the setting, which it does, to tell you whether it is already on.
 Shizuku exposes no deep link for starting either — `MainActivity` is its only
 exported entry point — so the pairing flow has to happen in Shizuku's own UI.
 
+**Pairing is only needed when there is no PC.** `adb shell` already runs as
+shell, which is the whole requirement, so with a PC attached just run
+`../start-shizuku.sh` — no Wireless Debugging, no pairing code. Wireless
+Debugging is how Shizuku reaches the device *from itself* when no PC is
+involved. The server does not survive a reboot either way.
+
 What the app does instead is remove the navigation pain, which on a TV remote
 is most of the difficulty:
 

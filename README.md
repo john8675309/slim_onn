@@ -86,6 +86,19 @@ system_server, which SELinux forbids from reading the `/sdcard` fuse mount
 Note the device still has no `curl`, `wget`, or TLS, so the downloading has to
 be done by an app — the script cannot fetch anything itself.
 
+## Starting Shizuku
+
+Only the no-PC case above needs Wireless Debugging pairing. Starting Shizuku's
+server just requires running its starter as shell (uid 2000), and `adb shell`
+already is shell — so with a PC attached there is no pairing, no code to type:
+
+```sh
+./start-shizuku.sh
+```
+
+Pairing is how Shizuku reaches the device *from itself* when no PC is involved.
+The server does not survive a reboot either way, so re-run this afterwards.
+
 ## The debloat list
 
 `slim.json` is the single source of truth for what gets removed. `slim.sh`,
