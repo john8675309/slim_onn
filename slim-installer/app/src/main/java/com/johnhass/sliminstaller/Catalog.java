@@ -72,8 +72,24 @@ public final class Catalog {
         return "armeabi-v7a";
     }
 
+    /** The package whose presence unlocks the privileged operations. */
+    public static final String SHIZUKU_PACKAGE = "moe.shizuku.privileged.api";
+
     public static List<AppSpec> apps() {
         List<AppSpec> list = new ArrayList<>();
+
+        // Listed first because it is what unlocks the debloat. Installing it is
+        // the one privileged-adjacent thing this app can bootstrap on its own:
+        // a prompted install needs no special rights. Starting it afterwards
+        // still has to be done from Wireless Debugging.
+        AppSpec shizuku = new AppSpec("shizuku", "Shizuku", SHIZUKU_PACKAGE,
+                "https://github.com/RikkaApps/Shizuku/releases/download/v13.6.0/"
+                        + "shizuku-v13.6.0.r1086.2650830c-release.apk",
+                null);
+        // Pinned release asset, so pin the digest with it.
+        shizuku.sha256 = "6e273ab0e991c4e79bc8b1bbb9b9dd739ccac1a8712a541a214078886b7b790f";
+        shizuku.versionName = "13.6.0";
+        list.add(shizuku);
 
         list.add(new AppSpec("flauncher", "FLauncher", "me.efesser.flauncher",
                 "https://github.com/john8675309/flauncher/releases/download/v0.1.1/flauncher-0.1.1.apk",
@@ -101,7 +117,9 @@ public final class Catalog {
                         + "tvbuttonmapper-v0.1.0-debug.apk",
                 null));
 
-        // Only the two launchers are on by default; the rest is opt-in.
+        // FLauncher and the button mapper on by default; the rest is opt-in.
+        // Shizuku is handled by the caller, which can see whether it is already
+        // installed.
         for (AppSpec a : list) {
             a.selected = "flauncher".equals(a.id) || "tvbuttonmapper".equals(a.id);
         }

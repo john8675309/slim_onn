@@ -71,6 +71,8 @@ Then:
 
 1. Enable Developer options → Wireless debugging.
 2. Sideload Shizuku or LADB, and start it via wireless-debugging pairing.
+   The Slim Installer app can install Shizuku for you — see
+   `slim-installer/README.md`.
 3. Download the APKs plus `slim-device.sh` with any downloader app — they land
    in `/sdcard/Download`.
 4. From the shell-uid terminal: `sh /sdcard/Download/slim-device.sh`

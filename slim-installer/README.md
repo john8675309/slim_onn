@@ -42,10 +42,15 @@ Needs a `local.properties` with `sdk.dir=/path/to/Android/Sdk` (not committed).
 1. Launch **Slim Installer** from the TV home screen.
 2. *Allow installs from this app* — grants the unknown-sources appop, needed
    for prompted installs.
-3. Optionally start Shizuku, then *Re-check Shizuku*. The status line reports
-   which mode is active.
-4. Tick the apps and press *Download and install selected*.
-5. *Remove preinstalled apps* handles the debloat, Shizuku only.
+3. Tick the apps and press *Download and install selected*.
+4. *Remove preinstalled apps* handles the debloat, Shizuku only.
+
+**Shizuku is in the catalog**, pinned to v13.6.0 with its sha256, and is ticked
+by default when it is not already installed. A prompted install needs no
+privilege, so the app can bootstrap its own enabler: install Shizuku from here,
+start it from Wireless Debugging, then press *Re-check Shizuku* to unlock the
+debloat. Installing it is not the same as running it, and the app says so once
+the install lands.
 
 JTV is resolved through `https://johnhass.com/jtv.json` — the same contract the
 shell scripts use — so it always picks up the current release and verifies the

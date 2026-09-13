@@ -50,6 +50,16 @@ public final class MainActivity extends Activity implements InstallResultReceive
         InstallResultReceiver.listener = this;
 
         apps = Catalog.apps();
+
+        // Offer Shizuku by default only when it is missing -- it is what
+        // unlocks the debloat, and a prompted install of it needs no privilege,
+        // so this is the one bootstrap the app can perform for itself.
+        for (Catalog.AppSpec app : apps) {
+            if (Catalog.SHIZUKU_PACKAGE.equals(app.packageName)) {
+                app.selected = !isInstalled(Catalog.SHIZUKU_PACKAGE);
+            }
+        }
+
         for (final Catalog.AppSpec app : apps) {
             CheckBox box = new CheckBox(this);
             box.setText(app.display());
@@ -226,7 +236,32 @@ public final class MainActivity extends Activity implements InstallResultReceive
         if (!any) {
             append("[install] nothing selected");
         }
+
         append("");
+    }
+
+    /**
+     * Installing Shizuku is not the same as having it running, and the
+     * difference is invisible from the log otherwise.
+     *
+     * <p>Called once an install has actually finished. Checking right after the
+     * session is committed would be too early: a prompted install has not
+     * happened yet at that point, so the package would still look absent.
+     */
+    private void noteShizukuNeedsStarting(String label) {
+        if (ops != null) {
+            return;
+        }
+        for (Catalog.AppSpec app : apps) {
+            if (app.label.equals(label)
+                    && Catalog.SHIZUKU_PACKAGE.equals(app.packageName)) {
+                append("");
+                append("[next] Shizuku is installed but not running.");
+                append("  Open it, start it from Wireless Debugging,");
+                append("  then press Re-check Shizuku here to unlock the debloat.");
+                return;
+            }
+        }
     }
 
     private void install(Catalog.AppSpec app, File apk) throws Exception {
@@ -234,6 +269,7 @@ public final class MainActivity extends Activity implements InstallResultReceive
             String error = installer.installPrivileged(ops, apk, app.packageName);
             if (error == null) {
                 append("[ok] " + app.label + " installed");
+                noteShizukuNeedsStarting(app.label);
             } else {
                 append("[fail] " + app.label + ": " + error);
             }
@@ -247,6 +283,9 @@ public final class MainActivity extends Activity implements InstallResultReceive
     public void onInstallResult(String label, boolean success, String message) {
         append(success ? "[ok] " + label + " installed"
                 : "[fail] " + label + ": " + message);
+        if (success) {
+            noteShizukuNeedsStarting(label);
+        }
     }
 
     // --------------------------------------------------------------- debloat --
