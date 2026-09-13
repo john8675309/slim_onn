@@ -1,0 +1,10 @@
+# Downloaded APKs staged for pushing to the device -- hundreds of MB, and
+# always re-fetchable from the URLs in slim-push.sh.
+slim-payload/
+
+# APKs downloaded by slim.sh in the repo root
+*.apk
+sha256sums
+
+# Machine-local Claude Code settings
+.claude/settings.local.json

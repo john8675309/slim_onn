@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="24dp">
+
+    <!-- Left: what to do. Everything here is focusable so a D-pad remote can
+         reach it without a touchscreen. -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="12dp"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/appList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <Button
+                android:id="@+id/installButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Download and install selected" />
+
+            <Button
+                android:id="@+id/debloatButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Remove preinstalled apps" />
+
+            <Button
+                android:id="@+id/unknownSourcesButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Allow installs from this app" />
+
+            <Button
+                android:id="@+id/recheckButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Re-check Shizuku" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Right: the log. -->
+    <ScrollView
+        android:id="@+id/logScroll"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="24dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/log"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:textSize="12sp" />
+    </ScrollView>
+
+</LinearLayout>

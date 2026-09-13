@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- No action bar: on a TV the title bar just steals a line from the
+         content, and the status line below already names the app state. -->
+    <style name="AppTheme" parent="@android:style/Theme.DeviceDefault.NoActionBar">
+        <item name="android:colorBackground">#101418</item>
+        <item name="android:textColorPrimary">#E8EAED</item>
+    </style>
+</resources>

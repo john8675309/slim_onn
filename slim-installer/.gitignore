@@ -1,0 +1,16 @@
+# Android / Gradle build output
+.gradle/
+build/
+app/build/
+*.apk
+*.aab
+
+# Machine-specific SDK path
+local.properties
+
+# IDE
+.idea/
+*.iml
+
+# Generated at build time from ../slim.json by the syncDebloatManifest task
+app/src/main/assets/slim.json

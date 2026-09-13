@@ -1,0 +1,52 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.johnhass.sliminstaller'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId "com.johnhass.sliminstaller"
+        // Matches the lowest minSdk of anything we install (JTV declares 24).
+        minSdk 24
+        targetSdk 36
+        versionCode 1
+        versionName "0.1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+// The APK bundles slim.json as an offline fallback. Copy it from the repo root
+// at build time rather than keeping a second copy under version control, so the
+// fallback cannot drift away from the real manifest.
+def manifestSource = rootProject.file('../slim.json')
+
+tasks.register('syncDebloatManifest', Copy) {
+    from manifestSource
+    into layout.projectDirectory.dir('src/main/assets')
+    doFirst {
+        if (!manifestSource.exists()) {
+            throw new GradleException("missing ${manifestSource}, the bundled debloat fallback would be stale")
+        }
+    }
+}
+
+tasks.named('preBuild') { dependsOn 'syncDebloatManifest' }
+
+dependencies {
+    // Shizuku is optional at runtime: the app degrades to prompt-installs when
+    // the service is not running. These only provide the client binder stubs.
+    implementation 'dev.rikka.shizuku:api:13.1.5'
+    implementation 'dev.rikka.shizuku:provider:13.1.5'
+}

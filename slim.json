@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "updated": "2026-09-13",
+  "notes": "Single source of truth for the debloat list. Consumed by slim.sh, slim-device.sh and the Slim Installer app.",
+  "launcherReplacement": "me.efesser.flauncher",
+  "bloat": [
+    "com.netflix.ninja",
+    "com.google.android.youtube.tvunplugged",
+    "com.google.android.youtube.tvmusic",
+    "com.google.android.youtube.tv",
+    "com.amazon.amazonvideo.livingroom",
+    "com.disney.disneyplus",
+    "com.hulu.livingroomplus",
+    "com.tubitv",
+    "com.apple.atve.androidtv.appletv",
+    "com.cbs.app.TvApplication",
+    "com.cbs.ott",
+    "com.espn.androidtv.TvApplication",
+    "com.espn.score_center",
+    "com.wbd.stream",
+    "com.google.android.play.games",
+    "com.google.android.videos",
+    "com.instagram.airwave"
+  ],
+  "disable": [
+    "com.google.android.apps.tv.launcherx",
+    "com.google.android.tungsten.setupwraith"
+  ]
+}
