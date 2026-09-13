@@ -36,6 +36,10 @@ public final class MainActivity extends Activity implements InstallResultReceive
     private PrivilegedOps ops;
     private Installer installer;
 
+    /** Last known privileged state, so the quiet re-check can spot a change. */
+    private Boolean lastAvailable;
+    private boolean resumedOnce;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +79,8 @@ public final class MainActivity extends Activity implements InstallResultReceive
                 .setOnClickListener(v -> worker.execute(this::doInstall));
         ((Button) findViewById(R.id.debloatButton))
                 .setOnClickListener(v -> worker.execute(this::doDebloat));
+        ((Button) findViewById(R.id.openShizukuButton))
+                .setOnClickListener(v -> openShizuku());
         ((Button) findViewById(R.id.recheckButton))
                 .setOnClickListener(v -> worker.execute(this::refreshPrivilege));
         ((Button) findViewById(R.id.unknownSourcesButton))
@@ -89,6 +95,19 @@ public final class MainActivity extends Activity implements InstallResultReceive
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        // onCreate already kicks off the first check; from then on, coming back
+        // to the app usually means the user just started Shizuku, so re-check
+        // without making them press the button.
+        if (!resumedOnce) {
+            resumedOnce = true;
+            return;
+        }
+        worker.execute(() -> refreshPrivilege(false));
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (InstallResultReceiver.listener == this) {
@@ -100,9 +119,26 @@ public final class MainActivity extends Activity implements InstallResultReceive
     // ------------------------------------------------------------ privilege --
 
     private void refreshPrivilege() {
+        refreshPrivilege(true);
+    }
+
+    /**
+     * Re-reads whether a privileged backend is usable.
+     *
+     * @param verbose when false, only reports if the answer changed -- the
+     *                automatic check on resume would otherwise repeat the same
+     *                paragraph every time the user comes back to the app
+     */
+    private void refreshPrivilege(boolean verbose) {
         PrivilegedOps candidate = new ShizukuOps();
         boolean available = candidate.isAvailable() && candidate.ensurePermission();
         ops = available ? candidate : null;
+
+        boolean changed = lastAvailable == null || lastAvailable != available;
+        lastAvailable = available;
+        if (!verbose && !changed) {
+            return;
+        }
 
         if (available) {
             setStatus("Shizuku connected: silent install + debloat");
@@ -389,6 +425,34 @@ public final class MainActivity extends Activity implements InstallResultReceive
     }
 
     // ------------------------------------------------------------------- ui --
+
+    /**
+     * Launches the Shizuku app.
+     *
+     * <p>Worth a button of its own: Shizuku declares only a plain
+     * CATEGORY_LAUNCHER entry and no LEANBACK_LAUNCHER one, so it never appears
+     * on an Android TV home screen. Without this there is no obvious way to
+     * reach it on a TV after installing it.
+     */
+    private void openShizuku() {
+        if (!isInstalled(Catalog.SHIZUKU_PACKAGE)) {
+            append("[shizuku] not installed - tick it above and install it first");
+            return;
+        }
+        Intent intent = getPackageManager().getLaunchIntentForPackage(Catalog.SHIZUKU_PACKAGE);
+        if (intent == null) {
+            // No launcher entry resolved, so address the activity directly.
+            intent = new Intent(Intent.ACTION_MAIN)
+                    .setClassName(Catalog.SHIZUKU_PACKAGE, "moe.shizuku.manager.MainActivity");
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try {
+            startActivity(intent);
+            append("[shizuku] opened - start it, then come back");
+        } catch (Exception e) {
+            append("[shizuku] could not open it: " + e);
+        }
+    }
 
     private void openUnknownSources() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {

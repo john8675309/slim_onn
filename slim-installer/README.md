@@ -48,9 +48,14 @@ Needs a `local.properties` with `sdk.dir=/path/to/Android/Sdk` (not committed).
 **Shizuku is in the catalog**, pinned to v13.6.0 with its sha256, and is ticked
 by default when it is not already installed. A prompted install needs no
 privilege, so the app can bootstrap its own enabler: install Shizuku from here,
-start it from Wireless Debugging, then press *Re-check Shizuku* to unlock the
-debloat. Installing it is not the same as running it, and the app says so once
-the install lands.
+press *Open Shizuku*, start it from Wireless Debugging, and come back — the app
+re-checks on its own. Installing it is not the same as running it, and the app
+says so once the install lands.
+
+*Open Shizuku* matters more than it looks on a TV: Shizuku declares only a
+plain `CATEGORY_LAUNCHER` entry and no `LEANBACK_LAUNCHER` one, so it never
+appears on an Android TV home screen. Without this button there is no obvious
+way to reach it after installing it.
 
 JTV is resolved through `https://johnhass.com/jtv.json` — the same contract the
 shell scripts use — so it always picks up the current release and verifies the
